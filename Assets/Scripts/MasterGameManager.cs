@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using NewtonVR;
+using UnityEngine.UI;
 
 public class MasterGameManager : MonoBehaviour {
 
@@ -20,6 +21,12 @@ public class MasterGameManager : MonoBehaviour {
 	[HideInInspector]
 	public Transform LeftHandTransform;
 
+    public Text goldText;
+    public int gold;
+
+    public Text expText;
+    public int exp;
+
 
 	void Awake ()
 	{
@@ -37,8 +44,10 @@ public class MasterGameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
-
+        gold = 100;
+        goldText = GameObject.FindWithTag("canv").transform.GetChild(0).GetComponent<Text>();
+        expText = GameObject.FindWithTag("canv").transform.GetChild(1).GetComponent<Text>();
+        exp = 0;
 	}
 
 	// Update is called once per frame
@@ -54,8 +63,21 @@ public class MasterGameManager : MonoBehaviour {
 		{
 			LeftHandTransform = nvrPlayer.transform.Find("LeftHand");
 		}
+        goldText.text = "Gold: " + gold;
+        expText.text = "Exp: " + exp;
+
+    }
 
 
 
-	}
+    public void addGold(int newGold)
+    {
+        gold += newGold;
+    }
+
+
+    public void addExp(int newExp)
+    {
+        exp += newExp;
+    }
 }
