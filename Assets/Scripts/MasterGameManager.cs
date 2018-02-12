@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using NewtonVR;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ public class MasterGameManager : MonoBehaviour {
 
 	[HideInInspector]
 	public NVRPlayer nvrPlayer;
+
+    public HumanWatchTower tower;
 
 	[HideInInspector]
 	public SpellEngine spellEngine;
@@ -32,10 +35,13 @@ public class MasterGameManager : MonoBehaviour {
     public Text expText;
     public int exp;
 
+    public int goldRequiredToUpgrade;
+
 
     void Awake ()
 	{
 		nvrPlayer =  GameObject.FindWithTag("Player").GetComponent<NVRPlayer>();
+        tower = GameObject.FindWithTag("tower").GetComponent<HumanWatchTower>();
 
 		gestureGameManager = GetComponent<GestureGameManager>();
 		gestureGameManager.nvrPlayer = nvrPlayer;
@@ -54,7 +60,7 @@ public class MasterGameManager : MonoBehaviour {
         goldText = GameObject.FindWithTag("canv").transform.GetChild(0).GetComponent<Text>();
         expText = GameObject.FindWithTag("canv").transform.GetChild(1).GetComponent<Text>();
         exp = 0;
-
+        goldRequiredToUpgrade = 200;
     }
 
 	// Update is called once per frame
@@ -72,6 +78,7 @@ public class MasterGameManager : MonoBehaviour {
 		}
         goldText.text = "Gold: " + gold;
         expText.text = "Exp: " + exp;
+        print(tower.currentHealth);
     }
 
     public void addGold(int newGold)
@@ -83,5 +90,35 @@ public class MasterGameManager : MonoBehaviour {
     public void addExp(int newExp)
     {
         exp += newExp;
+    }
+
+    public void upgradeTower()
+    {
+        if (gold < goldRequiredToUpgrade)
+        {
+            print("You do not have enough gold.");
+            return;
+        }
+        int newHealth = (int) (tower.maximumHealth * tower.upgradeHealthMultiplier);
+        tower.maximumHealth = newHealth;
+        tower.currentHealth = tower.maximumHealth;
+        gold = gold - goldRequiredToUpgrade;
+        goldRequiredToUpgrade = goldRequiredToUpgrade * 2;
+    }
+
+    public void repairTower()
+    {
+        int goldNeeded = 0;
+        while ((goldNeeded <= gold) && (tower.currentHealth <= tower.maximumHealth)) 
+        {
+            tower.currentHealth += 50;
+            goldNeeded += 1;
+            if (tower.currentHealth > tower.maximumHealth)
+            {
+                tower.currentHealth = tower.maximumHealth;
+                break;
+            }
+        }
+        gold = gold - goldNeeded;
     }
 }

@@ -9,6 +9,7 @@ TagManager:
   - Persistent
   - Destination
   - canv
+  - tower
   layers:
   - Default
   - TransparentFX
